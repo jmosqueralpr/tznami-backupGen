@@ -1,0 +1,23 @@
+{
+  "name": "tznami-backupgen",
+  "version": "1.0.0",
+  "description": "Generador de backups en PC o Servidor propio",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmosqueralpr/tznami-backupGen.git"
+  },
+  "author": "Javier Mosquera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jmosqueralpr/tznami-backupGen/issues"
+  },
+  "homepage": "https://github.com/jmosqueralpr/tznami-backupGen#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  }
+}
