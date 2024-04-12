@@ -17,11 +17,12 @@
             <button type="submit">Iniciar sesión</button>
         </form>
 
-        <div id="fileSelection" style="display: none;">
+        <div id="fileSelection"style="display: none;">
             <h2>Seleccionar archivos</h2>
-            <input type="file" id="fileInput" name="fileInput" multiple required>
+            <label for="fileInput" class="labelInput">Seleccionar archivos</label>
+            <input type="file" class="fileInput" id="fileInput" name="fileInput" multiple required>
             <div id="fileList"></div>
-            <button id="uploadButton" style="display: none;">Subir archivo(s)</button>
+            <button id="uploadButton" style="display: none;">Subir archivos</button>
         </div>
         <p id="status"></p>
     </div>

@@ -47,11 +47,16 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     } */
 });
 
+
+//ENVIO DE ARCHIVOS.
+//1ERO Cuando presiono para camrgar archivos, hago que se visualicen en la pantalla.
 document.getElementById('fileInput').addEventListener('change', function() {
     var fileList = document.getElementById('fileList');
     fileList.innerHTML = ''; // Limpiar la lista de archivos previa
+    console.log(this.files);
 
-    var files = this.files;
+    var files = this.files; //Cuando hago el imput file, se me genera un array con los archivos.
+    //Genero un div para cada elemento para poder mostrarlo en pantalla.
     for (var i = 0; i < files.length; i++) {
         var listItem = document.createElement('div');
         listItem.textContent = files[i].name;
@@ -65,24 +70,32 @@ document.getElementById('fileInput').addEventListener('change', function() {
     }
 });
 
+//2do Cargados los archivos, al presionar el boton debo enviarlos al servidor.
 document.getElementById('uploadButton').addEventListener('click', function(event) {
     event.preventDefault();
     
-    var files = document.getElementById('fileInput').files;
+    //Tomo los archivos cargados en la web
+    var files = document.getElementById('fileInput').files; 
 
+    //Creo el formData con todos los valores de los archivos para enviar.
     var formData = new FormData();
     for (var i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/upload', true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
+    fetch('/upload', {
+        method: 'POST',
+        body: formData //Envio el formData con los archivos.
+    })
+    .then(response => {
+        if (response.ok) {
             document.getElementById('status').textContent = 'Archivos subidos correctamente.';
         } else {
             document.getElementById('status').textContent = 'Error al subir archivos.';
         }
-    };
-    xhr.send(formData);
+    })
+    .catch(error => {
+        console.error('Error al realizar la solicitud:', error);
+        document.getElementById('status').textContent = 'Error al subir archivos.';
+    });
 });

@@ -12,11 +12,23 @@ body {
 
 input[type="text"],
 input[type="password"],
-input[type="file"],
 button {
     display: block;
     margin-bottom: 10px;
 }
+
+input[type="file"] {
+    display:none;
+}
+
+.labelInput {
+    border: 1px solid #ccc;
+    background-color: #007bff;
+    color: #fff;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
 
 button {
     background-color: #007bff;
@@ -25,6 +37,7 @@ button {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 button:hover {
@@ -34,3 +47,4 @@ button:hover {
 #fileList div {
     margin-bottom: 5px;
 }
+
