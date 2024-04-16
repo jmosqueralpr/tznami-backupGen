@@ -76,6 +76,10 @@ document.getElementById('uploadButton').addEventListener('click', function(event
     
     //Tomo los archivos cargados en la web
     var files = document.getElementById('fileInput').files; 
+    //El destino donde se van a guardar las carpetas
+    var destiny = document.getElementById('destiny').value;
+    //La selección de la carpeta
+    var fileBkp =  document.getElementById('fileBkp').value;
 
     //Creo el formData con todos los valores de los archivos para enviar.
     var formData = new FormData();
@@ -83,19 +87,23 @@ document.getElementById('uploadButton').addEventListener('click', function(event
         formData.append('files', files[i]);
     }
 
-    fetch('/upload', {
-        method: 'POST',
-        body: formData //Envio el formData con los archivos.
-    })
-    .then(response => {
-        if (response.ok) {
-            document.getElementById('status').textContent = 'Archivos subidos correctamente.';
-        } else {
+    if (destiny != "" && fileBkp != ""){
+        fetch(`/upload?destiny=${destiny}&folder=${fileBkp}`, {
+            method: 'POST',
+            body: formData //Envio el formData con los archivos.
+        })
+        .then(response => { 
+            if (response.ok) {
+                document.getElementById('status').textContent = 'Archivos subidos correctamente.';
+            } else {
+                document.getElementById('status').textContent = 'Error al subir archivos.';
+            }
+        })
+        .catch(error => {
+            console.error('Error al realizar la solicitud:', error);
             document.getElementById('status').textContent = 'Error al subir archivos.';
-        }
-    })
-    .catch(error => {
-        console.error('Error al realizar la solicitud:', error);
-        document.getElementById('status').textContent = 'Error al subir archivos.';
-    });
+        }); 
+    } else {
+        document.getElementById('status').textContent = 'Para poder subir archivos, ingresar los datos en todos los campos';
+    }
 });

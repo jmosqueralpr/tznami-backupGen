@@ -17,12 +17,30 @@
             <button type="submit">Iniciar sesión</button>
         </form>
 
-        <div id="fileSelection"style="display: none;">
+        <div id="fileSelection" style="display: none;">
             <h2>Seleccionar archivos</h2>
             <label for="fileInput" class="labelInput">Seleccionar archivos</label>
-            <input type="file" class="fileInput" id="fileInput" name="fileInput" multiple required>
-            <div id="fileList"></div>
-            <button id="uploadButton" style="display: none;">Subir archivos</button>
+            <input type="file" class="fileInput" id="fileInput" name="fileInput" multiple required>    
+            <div id="fileList" class="filelist"></div>
+            <h2>Seleccionar destino del backup</h2>
+            <select name="destiny" id="destiny" class="selectStyle" required>
+                <option value="" disabled selected hidden>Selecciona una opción</option>
+                <option value="BalizadorBoyero">Balizador Boyero</option>
+                <option value="Balizador573">Balizador 573</option>
+                <option value="Balizador574">Balizador 574</option>
+                <option value="Balizador294">Balizador 294</option>
+                <option value="LanchaCharrua">Lancha Charrúa</option>
+                <option value="LanchaDonOsvaldo">Lancha Don Osvaldo</option>
+            </select>
+            <h2>Seleccionar carpeta de backup</h2>
+            <select name="fileBkp" id="fileBkp" class="selectStyle" required>
+                <option value="" disabled selected hidden>Selecciona una opción</option>
+                <option value="fotos">Fotos</option>
+                <option value="derrotas">Derrotas</option>
+                <option value="LogsAIS">LogsAIS</option>
+                <option value="mantenimientoEquiposMobiles">Mantenimiento de equipos móbiles</option>
+            </select>
+            <button id="uploadButton" class="uploadButton" style="display: none;" >Subir archivos</button> <!--  -->
         </div>
         <p id="status"></p>
     </div>
