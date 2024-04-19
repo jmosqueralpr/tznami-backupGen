@@ -1,124 +1,116 @@
-//ROUTES
-
 const express = require('express');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { Dropbox } = require('dropbox');
+
 const routesApp = express();
+routesApp.use(bodyParser.urlencoded({ extended: false }));
+routesApp.use(bodyParser.json());
 
-routesApp.get("/UserName",(req, res)=>{
-    console.log(req.body);
-    res.send("profile page");
-});
-
-//LOGIN
-const users = [{
+// Definir usuarios para el login
+const users = [
+  {
     user: 'jmosquera',
     password: 'javierm',
     level: 2
-},
-{
+  },
+  {
     user: 'admin',
     password: 'administrador',
     level: 1
-},
-{
+  },
+  {
     user: 'bsoria',
     password: 'brendas',
     level: 1
-},
-{
+  },
+  {
     user: 'usuario',
     password: 'contraseña',
     level: 2
-},
-{
+  },
+  {
     user: '1',
     password: '1',
     level: 2
-},]
-    
+  }
+];
+
 let userGlobal;
 
-routesApp.post("/login",(req, res)=>{
-    let verifyUser =  false;
-    console.log(req.body);
-     users.forEach( user =>{
-        console.log(user);
-        if (req.body.username === user.user && req.body.password === user.password) {
-            verifyUser = true;
-            console.log("Verify ok");
-            userGlobal = user.user;
-        }; 
-       
-    });
-    if (verifyUser == true) {
-        console.log("Entra?");
-        res.send(true);
-    } else {
-        res.send(false);
-    }; 
-    
+// Ruta para el login
+routesApp.post("/login", (req, res) => {
+  let verifyUser = false;
+  console.log(req.body);
+  users.forEach(user => {
+    console.log(user);
+    if (req.body.username === user.user && req.body.password === user.password) {
+      verifyUser = true;
+      console.log("Verify ok");
+      userGlobal = user.user;
+    };
+  });
+  if (verifyUser == true) {
+    console.log("Entra?");
+    res.send(true);
+  } else {
+    res.send(false);
+  };
 });
-
-//Exportar el modulo de node
-module.exports = routesApp; 
-
-
-
-//GUARDANDO LOS ARCHIVOS
-
-//Para acceder a datos del cuerpo de la solicitud post.
-const bodyParser = require('body-parser');
-//Para manejar la carga de archivos en aplicaciones web
-const multer = require('multer');
-//Para resolver rutas de archivos.
-const path = require('path');
-//Para manejo del file system
-const fs = require('fs');
 
 // Configurar multer para manejar los archivos recibidos en la solicitud
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      // Obtener la fecha actual
-      const today = new Date();
-      var destiny = req.query.destiny;
-      var folder = req.query.folder;
+  destination: function (req, file, cb) {
+    const today = new Date();
+    const destiny = req.query.destiny;
+    const folder = req.query.folder;
+    const formattedDate = today.getFullYear() +
+                          String(today.getMonth() + 1).padStart(2, '0') +
+                          String(today.getDate()).padStart(2, '0') +
+                          String(userGlobal);
+    const uploadDir = path.join(`uploads/${destiny}/${folder}`, formattedDate);
+    fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
 
-      // Formatear la fecha en el formato deseado: YYYYMMDD
-      const formattedDate = today.getFullYear() + 
-                            String(today.getMonth() + 1).padStart(2, '0') + 
-                            String(today.getDate()).padStart(2, '0') +
-                            String(userGlobal);
-      // Directorio donde deseas guardar los archivos con la fecha actual
-      const uploadDir = path.join(`uploads/${destiny}/${folder}`, formattedDate);
-      // Crear el directorio si no existe
-      fs.mkdirSync(uploadDir, { recursive: true });
-      // Indicar multer que el directorio de destino es el creado
-      cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-      // Aquí se define cómo se guardará el archivo con su nombre original y extensión
-      cb(null, file.originalname);
+const upload = multer({ storage: storage });
+
+// Ruta para manejar las solicitudes de subida de archivos a Dropbox
+routesApp.post(`/upload`, upload.array('files'), async (req, res) => {
+  try {
+    const files = req.files;
+    const { destiny, folder } = req.query;
+    console.log(req.query);
+    console.log(req.query.destiny);
+    console.log(req.query.folder);
+    console.log(files);
+
+    const today = new Date();
+    const formattedDate = today.getFullYear() +
+                          String(today.getMonth() + 1).padStart(2, '0') +
+                          String(today.getDate()).padStart(2, '0') +
+                          today.toLocaleString('default', { month: 'long' });
+    
+    //TOKEN DE DROPBOX, no esta el token de dropbox porque para subir a git hay que eliminarlo. Ver el token en el Bitwarden de EYC 
+    const dbx = new Dropbox({ accessToken: '' });
+
+    for (const file of files) {
+      const fileContents = fs.readFileSync(file.path);
+      const dropboxFilePath = `/${destiny}/${folder}/${formattedDate}/${file.originalname}`;
+      await dbx.filesUpload({ path: dropboxFilePath, contents: fileContents });
     }
-  });
-  
-  const upload = multer({ storage: storage });
-  
-  // Configurar bodyParser para analizar los cuerpos de las solicitudes
-  routesApp.use(bodyParser.urlencoded({ extended: false }));
-  routesApp.use(bodyParser.json());
-  
-  
-  // Ruta para manejar las solicitudes de subida de archivos
-  routesApp.post(`/upload`, upload.array('files'), (req, res) => {
-      // Si estás enviando solo un archivo, puedes acceder a él a través de req.file
-      const files = req.files;
-      console.log(req.query);
-      console.log(req.query.destiny);
-      console.log(req.query.folder);
-      console.log(files); // Aquí puedes ver los detalles del archivo enviado
-  
-      // Si estás enviando otros campos además del archivo, puedes acceder a ellos a través de req.body
-      const formData = req.body;
-      console.log(formData); // Aquí puedes ver los otros campos enviados
-  
-      res.status(200).send('Solicitud recibida correctamente.');
-  });
+
+    res.status(200).send('Archivos subidos correctamente a Dropbox.');
+  } catch (error) {
+    console.error('Error al subir archivos a Dropbox:', error);
+    res.status(500).send('Error al subir archivos a Dropbox.');
+  }
+});
+
+module.exports = routesApp;

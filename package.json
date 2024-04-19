@@ -18,6 +18,7 @@
   "homepage": "https://github.com/jmosqueralpr/tznami-backupGen#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "dropbox": "^10.34.0",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
     "morgan": "^1.10.0",
