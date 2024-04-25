@@ -38,7 +38,7 @@ const users = [
   }
 ];
 
-let userGlobal;
+
 
 // Ruta para el login
 routesApp.post("/login", (req, res) => {
@@ -49,7 +49,7 @@ routesApp.post("/login", (req, res) => {
     if (req.body.username === user.user && req.body.password === user.password) {
       verifyUser = true;
       console.log("Verify ok");
-      userGlobal = user.user;
+      global.userGlobal = user.user;
     };
   });
   if (verifyUser == true) {
@@ -69,7 +69,7 @@ const storage = multer.diskStorage({
     const formattedDate = today.getFullYear() +
                           String(today.getMonth() + 1).padStart(2, '0') +
                           String(today.getDate()).padStart(2, '0') +
-                          String(userGlobal);
+                          String(global.userGlobal);
     const uploadDir = path.join(`uploads/${destiny}/${folder}`, formattedDate);
     fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);

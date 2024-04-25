@@ -60,6 +60,7 @@ document.getElementById('fileInput').addEventListener('change', function() {
     for (var i = 0; i < files.length; i++) {
         var listItem = document.createElement('div');
         listItem.textContent = files[i].name;
+        listItem.classList.add('itemFile');
         fileList.appendChild(listItem);
     }
 
