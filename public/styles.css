@@ -196,7 +196,7 @@ button:hover {
 /* FOOTER */
 
 footer {
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     width: 98%;
     text-align: right;
