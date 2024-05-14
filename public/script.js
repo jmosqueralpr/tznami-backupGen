@@ -1,4 +1,6 @@
 
+ 
+
 //EVENTO GENERADO POR EL BOTON Iniciar sesión.
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -49,20 +51,112 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
 
 //ENVIO DE ARCHIVOS.
+var flagSendFiles = 1; //Un flag para saber si los archivos se enviaron o no
+let files = [];
+let filesAux = [];
+
 //1ERO Cuando presiono para camrgar archivos, hago que se visualicen en la pantalla.
 document.getElementById('fileInput').addEventListener('change', function() {
     var fileList = document.getElementById('fileList');
-    fileList.innerHTML = ''; // Limpiar la lista de archivos previa
-    console.log(this.files);
+    fileList.innerHTML = ''; 
 
-    var files = this.files; //Cuando hago el imput file, se me genera un array con los archivos.
+        
+        filesAux = this.files; 
+        // Limpiar la lista de archivos previa
+        if (flagSendFiles == 2) {
+
+            //Acá agrego los nuevos  archivos.
+            let j = files.length;
+            let flag = true;
+            for (var i = 0; i < filesAux.length; i++){
+                files.forEach((element) => {
+                    console.log(`Element name: ${element.name}`);
+                    if (element.name == filesAux[i].name){
+                        console.log(`Element con nombre coincidente: ${element.name}`);
+                        flag = false;
+                        j--;
+                    }
+                })
+                if (flag == true) {
+                    files[j + i] = filesAux[i];
+                }
+                flag = true;
+                console.log(`Length + i: ${j + i} `);
+            }
+        };
+        if (flagSendFiles == 1 ){
+
+            console.log(this.files);
+            files = filesAux;
+            flagSendFiles = 2;
+            }; 
+        
+
+        console.log("Files luego del if");
+        console.log(files);
+
+    //Cuando hago el imput file, se me genera un array con los archivos.
+     
+    console.log(files);
+    console.log(typeof files);
+
     //Genero un div para cada elemento para poder mostrarlo en pantalla.
     for (var i = 0; i < files.length; i++) {
+
+        var listItemNumber = Math.floor(Math.random()*3000000);
+
         var listItem = document.createElement('div');
-        listItem.textContent = files[i].name;
+        
+        var fileName = document.createElement('span');
+
+        fileName.textContent = files[i].name;
+
+        var removeButton = document.createElement('button');
+        removeButton.textContent = 'X';
+        removeButton.classList.add('removeButton');
+
+        //Identificador único para cada item, para asociar el evento de borrar el item.
+        listItem.id = `fileItem_${listItemNumber}`;
+
+        //Identificador del file.
+        files[i].listItemNumber = `fileItem_${listItemNumber}`;
+
+        //Evento para eliminar el archivo cuando se hace clic en el boton de eliminar.
+        removeButton.addEventListener('click', function(){
+            //Obtener el id del elemento que quiero eliminar y luego asociarlo correctamente.
+            var id = this.parentElement.id;
+            console.log(id)
+            var elementToRemove = document.getElementById(id);
+            console.log("Elemento a remover");
+            console.log(elementToRemove);
+            fileList.removeChild(elementToRemove);
+            //Eliminar de files el elemento que quiero quitar.
+            let j = 0;
+            let aux = [];
+            for (var i = 0; i < files.length; i++){
+                //Busco el elemento que quiero quitar en función del id del elemento.
+                if(id == files[i].listItemNumber){
+                    console.log("Elemento Removido");
+                    console.log(files[i]);
+                    
+                } else {
+                    aux[j] = files[i]; //Guardo en una variable aux el filelist sin el elemento final.
+                    j++;
+                }
+            }
+            files =  aux;
+            console.log("Funciono lo del aux?")
+            console.log(files);
+        });
+
+        listItem.appendChild(fileName);
+        listItem.appendChild(removeButton);
         listItem.classList.add('itemFile');
         fileList.appendChild(listItem);
     }
+
+    console.log("Files con el listItemNumber");
+    console.log(files);
 
     if (files.length > 0) {
         document.getElementById('uploadButton').style.display = 'block';
@@ -74,9 +168,12 @@ document.getElementById('fileInput').addEventListener('change', function() {
 //2do Cargados los archivos, al presionar el boton debo enviarlos al servidor.
 document.getElementById('uploadButton').addEventListener('click', function(event) {
     event.preventDefault();
+
+    //flag de elementos enviados.
+    flagSendFiles = 1;
     
     //Tomo los archivos cargados en la web
-    var files = document.getElementById('fileInput').files; 
+    // var files = document.getElementById('fileInput').files;  -> ya tengo los archivos en la var files.
     //El destino donde se van a guardar las carpetas
     var destiny = document.getElementById('destiny').value;
     //La selección de la carpeta
