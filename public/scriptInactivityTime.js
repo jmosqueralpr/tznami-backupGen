@@ -1,5 +1,5 @@
 let timeoutId;
-const inactivityTime = 1 * 10 * 1000; // 2 minutos en milisegundos
+const inactivityTime = 10 * 10 * 1000; // 2 minutos en milisegundos
 
 function resetInactivityTimer() {
     clearTimeout(timeoutId);
