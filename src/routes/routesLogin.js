@@ -159,18 +159,19 @@ const users = [{
 
 
 loginApp.post("/login",(req, res)=>{
-    let verifyUser =  false;
+    global.verifyUser =  false;
     console.log(req.body);
      users.forEach( user =>{
         console.log(user);
         if (req.body.username === user.user && req.body.password === user.password) {
-            verifyUser = true;
+            global.verifyUser = true;
+            
             console.log("Verify ok");
             global.userGlobal = user.user;
         }; 
        
     });
-    if (verifyUser == true) {
+    if (global.verifyUser == true) {
         console.log("Entra?");
         res.send(true);
     } else {

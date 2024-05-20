@@ -191,7 +191,25 @@ button:hover {
     background-color: #bbe1fa;
     padding: 3px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
 }
+
+.itemFile span{
+    width: 100%;
+    padding-left: 10px;
+    font-weight: bold;
+}
+
+.itemFile button {
+    width: 50px;
+    height: 30px;
+    margin: 0;
+    font-weight: bold;
+
+}
+
+
 
 /* FOOTER */
 

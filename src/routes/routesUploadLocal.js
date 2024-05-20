@@ -6,7 +6,14 @@ const routesLogin = require('./routesLogin');
 
 routesApp.use(routesLogin);
 
-
+// Middleware para verificar la sesión
+function verifySession(req, res, next) {
+  if (global.verifyUser === true) {
+    next(); // La sesión es válida, continuar al siguiente middleware
+  } else {
+    res.status(403).send('Usuario no verificado, volver a iniciar sesión.');
+  }
+}
 
 //GUARDANDO LOS ARCHIVOS
 
@@ -20,12 +27,13 @@ const path = require('path');
 const fs = require('fs');
 //Para enviar los archivos a dropbox.
 const { Dropbox } = require('dropbox');
+const { nextTick } = require('process');
 
 // Configurar multer para manejar los archivos recibidos en la solicitud
 const storage = multer.diskStorage({
 
     
-    destination: function (req, file, cb) {
+     destination: function (req, file, cb) {
 
        
 
@@ -61,19 +69,29 @@ const storage = multer.diskStorage({
   
   
   // Ruta para manejar las solicitudes de subida de archivos
-  routesApp.post(`/upload`, upload.array('files'), (req, res) => {
+  routesApp.post(`/upload`, verifySession, upload.array('files'), (req, res) => {
+      
       // Si estás enviando solo un archivo, puedes acceder a él a través de req.file
       const files = req.files;
       console.log(req.query);
       console.log(req.query.destiny);
       console.log(req.query.folder);
       console.log(files); // Aquí puedes ver los detalles del archivo enviado
+
+      
   
       // Si estás enviando otros campos además del archivo, puedes acceder a ellos a través de req.body
-      const formData = req.body;
-      console.log(formData); // Aquí puedes ver los otros campos enviados
-  
-      res.status(200).send('Solicitud recibida correctamente.');
+      if (global.verifyUser == true){
+        const formData = req.body;
+        console.log(formData); // Aquí puedes ver los otros campos enviados
+        console.log(`global.verifyUser TRUE!`);
+        res.status(200).send('Solicitud recibida correctamente.');
+        
+        } else {
+          console.log("global.verifyUser FALSE"); 
+          res.status(200).send('Usuario no verificado, volver a iniciar sesión.');
+
+        }
   });
 
   //Exportar el modulo de node

@@ -8,6 +8,7 @@ const loginApp = require('./src/routes/routesLogin');
 //Acá voy a elegir entre routes y routesUploadLocal si necesito probar de forma local o con dropbox.
 const routesApp = require('./src/routes/routesUploadLocal');
 const middlewareApp = require('./src/middleware/middlewares');
+const inactivityTimeApp = require('./src/routes/inactivityTime');
 
 
 const app = express();
@@ -15,6 +16,7 @@ const app = express();
 //Declaración de una variable global.
 
 global.userGlobal = '';
+global.verifyUser = false;
 
 //1ero settings
 app.use(settingsApp);
@@ -29,6 +31,9 @@ app.use(loginApp);
 
 //ROUTES MODULE
 app.use(routesApp);
+
+//INACTIVITY TIME
+app.use(inactivityTimeApp);
 
 
 

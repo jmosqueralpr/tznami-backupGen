@@ -10,6 +10,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     //Capturo valores de username y password.
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
+    document.getElementById('titleGral').innerHTML = "SELECCIÓN DE ARCHIVOS";
+    
 
     fetch('http://127.0.0.1:3000/login', {
         method: 'POST',
@@ -57,6 +59,7 @@ let filesAux = [];
 
 //1ERO Cuando presiono para camrgar archivos, hago que se visualicen en la pantalla.
 document.getElementById('fileInput').addEventListener('change', function() {
+    
     var fileList = document.getElementById('fileList');
     fileList.innerHTML = ''; 
 

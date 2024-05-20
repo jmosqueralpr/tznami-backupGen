@@ -9,6 +9,15 @@ const routesApp = express();
 routesApp.use(bodyParser.urlencoded({ extended: false }));
 routesApp.use(bodyParser.json());
 
+// Middleware para verificar la sesión
+function verifySession(req, res, next) {
+  if (global.verifyUser === true) {
+    next(); // La sesión es válida, continuar al siguiente middleware
+  } else {
+    res.status(403).send('Usuario no verificado, volver a iniciar sesión.');
+  }
+}
+
 // Definir usuarios para el login
 const users = [
   {
@@ -82,7 +91,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Ruta para manejar las solicitudes de subida de archivos a Dropbox
-routesApp.post(`/upload`, upload.array('files'), async (req, res) => {
+routesApp.post(`/upload`, verifySession, upload.array('files'), async (req, res) => {
   try {
     const files = req.files;
     const { destiny, folder } = req.query;
